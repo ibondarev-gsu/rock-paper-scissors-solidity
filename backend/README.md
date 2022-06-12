@@ -1,0 +1,1 @@
+rock-paper-scissors-solidity> web3j generate truffle --truffle-json blockchain\build\contracts\RockPaperScissors.json --outputDir backend\src\main\java -p com.rockpaperscissors.contracts
