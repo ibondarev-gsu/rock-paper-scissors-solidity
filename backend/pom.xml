@@ -19,7 +19,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <web3j.version>4.9.2</web3j.version>
+        <web3j.version>4.8.2</web3j.version>
     </properties>
 
     <dependencies>
@@ -69,11 +69,11 @@
             <artifactId>core</artifactId>
             <version>${web3j.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.web3j</groupId>-->
-<!--            <artifactId>web3j-unit</artifactId>-->
-<!--            <version>4.9.2</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>web3j-unit</artifactId>
+            <version>4.8.2</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.beust</groupId>-->
 <!--            <artifactId>klaxon</artifactId>-->
@@ -101,14 +101,14 @@
 
     <repositories>
 
-<!--        <repository>-->
-<!--            <id>hyperledger-besu</id>-->
-<!--            <name>Hyperledger Besu Repository</name>-->
-<!--            <url>https://hyperledger.jfrog.io/ui/native/besu-maven</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
+        <repository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
 <!--        <repository>-->
 <!--            <id>spring-release</id>-->
 <!--            <name>Hyperledger Besu Repository</name>-->

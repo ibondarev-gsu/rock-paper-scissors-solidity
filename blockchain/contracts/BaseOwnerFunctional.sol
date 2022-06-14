@@ -16,7 +16,21 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
  * `onlyOwner`, which can be applied to your functions to restrict their use to
  * the owner.
  */
-contract BaseOwnerFunctional is Ownable, AccessControl {
+contract BaseOwnerFunctional is AccessControl {
+
+    bytes32 public constant OWNER_ROLE = keccak256(abi.encodePacked("OWNER_ROLE"));
+    bytes32 public constant ADMIN_ROLE = keccak256(abi.encodePacked("ADMIN_ROLE"));
+    bytes32 public constant DISTRIBUTOR_ROLE = keccak256(abi.encodePacked("DISTRIBUTOR_ROLE"));
+
+    constructor(address distributor) {
+        _setRoleAdmin(OWNER_ROLE, OWNER_ROLE);
+        _setRoleAdmin(ADMIN_ROLE, OWNER_ROLE);
+        _setRoleAdmin(DISTRIBUTOR_ROLE, ADMIN_ROLE);
+
+        _grantRole(OWNER_ROLE, _msgSender());
+        _grantRole(ADMIN_ROLE, _msgSender());
+        _grantRole(DISTRIBUTOR_ROLE, distributor);
+    }
 
     struct Player {
         address playerAddress;
@@ -51,7 +65,7 @@ contract BaseOwnerFunctional is Ownable, AccessControl {
 
     event RoomCreated(uint _id, address _firstPlayer, address _secondPlayer, uint _blockNumber, uint _timestamp);
 
-    function createRoom(address _firstPlayerAddress, address _secondPlayerAddress) external onlyOwner {
+    function createRoom(address _firstPlayerAddress, address _secondPlayerAddress) external onlyRole(OWNER_ROLE) {
         require(_firstPlayerAddress != _secondPlayerAddress, "Address: same value!");
 
         Player memory firstPlayer = Player(_firstPlayerAddress, false, false, Choice.None, bytes32(0));
@@ -62,6 +76,15 @@ contract BaseOwnerFunctional is Ownable, AccessControl {
         emit RoomCreated(roomCount, _firstPlayerAddress, _secondPlayerAddress, block.number, block.timestamp);
 
         roomCount++;
+    }
+
+    /**
+     * @dev Sets `adminRole` as ``role``'s admin role.
+     *
+     * Emits a {RoleAdminChanged} event.
+     */
+    function setRoleAdmin(bytes32 role, bytes32 adminRole) external onlyRole(OWNER_ROLE) {
+        _setRoleAdmin(role, adminRole);
     }
 
     //Скорее всего есть варик просмотреть эти данные не только владельцу

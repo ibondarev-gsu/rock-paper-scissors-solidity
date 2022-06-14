@@ -27,7 +27,7 @@ public class RockPaperScissorsApplication {
 //
 //        System.out.println(rockPaperScissors.owner().send());
 
-        EthFilter filter = new EthFilter(EARLIEST, LATEST, "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+        EthFilter filter = new EthFilter(EARLIEST, LATEST, "0x8464135c8F25Da09e49BC8782676a84730C318bC");
 
         AtomicInteger atomicInteger = new AtomicInteger();
 
