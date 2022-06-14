@@ -23,7 +23,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -32,20 +31,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot-devtools</artifactId>-->
-        <!--            <scope>runtime</scope>-->
-        <!--            <optional>true</optional>-->
-        <!--        </dependency>-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <!--        <dependency>-->
         <!--            <groupId>org.springframework.boot</groupId>-->
         <!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
@@ -69,17 +59,11 @@
             <artifactId>core</artifactId>
             <version>${web3j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>web3j-unit</artifactId>
-            <version>4.8.2</version>
-        </dependency>
 <!--        <dependency>-->
-<!--            <groupId>com.beust</groupId>-->
-<!--            <artifactId>klaxon</artifactId>-->
-<!--            <version>5.6</version>-->
+<!--            <groupId>org.web3j</groupId>-->
+<!--            <artifactId>web3j-unit</artifactId>-->
+<!--            <version>${web3j.version}</version>-->
 <!--        </dependency>-->
-
     </dependencies>
 
     <build>
@@ -100,19 +84,18 @@
     </build>
 
     <repositories>
-
-        <repository>
-            <id>jcenter</id>
-            <name>JCenter</name>
-            <url>https://jcenter.bintray.com/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
 <!--        <repository>-->
 <!--            <id>spring-release</id>-->
-<!--            <name>Hyperledger Besu Repository</name>-->
+<!--            <name>JCenter</name>-->
 <!--            <url>https://repo.spring.io/libs-release/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>hyperledger</id>-->
+<!--            <name>JCenter</name>-->
+<!--            <url>https://hyperledger.jfrog.io/artifactory/besu-maven/</url>-->
 <!--            <snapshots>-->
 <!--                <enabled>false</enabled>-->
 <!--            </snapshots>-->
@@ -125,15 +108,13 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
-
     </repositories>
 
     <pluginRepositories>
 <!--        <pluginRepository>-->
-<!--            <id>hyperledger-besu</id>-->
-<!--            <name>Hyperledger Besu Repository</name>-->
-<!--            <url>https://hyperledger.jfrog.io/ui/native/besu-maven</url>-->
+<!--            <id>spring-release</id>-->
+<!--            <name>JCenter</name>-->
+<!--            <url>https://repo.spring.io/libs-release/</url>-->
 <!--        </pluginRepository>-->
         <pluginRepository>
             <id>spring-milestones</id>
@@ -141,12 +122,9 @@
             <url>https://repo.spring.io/milestone</url>
         </pluginRepository>
 <!--        <pluginRepository>-->
-<!--            <id>spring-release</id>-->
-<!--            <name>Hyperledger Besu Repository</name>-->
-<!--            <url>https://repo.spring.io/libs-release/</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
+<!--            <id>hyperledger</id>-->
+<!--            <name>JCenter</name>-->
+<!--            <url>https://hyperledger.jfrog.io/artifactory/besu-maven/</url>-->
 <!--        </pluginRepository>-->
     </pluginRepositories>
 

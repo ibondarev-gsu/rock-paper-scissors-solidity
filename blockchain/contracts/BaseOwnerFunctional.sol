@@ -88,7 +88,7 @@ contract BaseOwnerFunctional is AccessControl {
     }
 
     //Скорее всего есть варик просмотреть эти данные не только владельцу
-    function getRoomCount() external view onlyOwner returns(uint){
+    function getRoomCount() external view onlyRole(OWNER_ROLE) returns(uint){
         return roomCount;
     }
 

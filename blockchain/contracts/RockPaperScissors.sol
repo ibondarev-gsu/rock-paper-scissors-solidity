@@ -18,6 +18,8 @@ contract RockPaperScissors is BaseOwnerFunctional{
     // bytes public encode;
     // bytes32 public keccak;
 
+    constructor(address distributor) BaseOwnerFunctional(distributor) {}
+
 
     function commit(uint _roomId, bytes32 _commitment) public {
         Room memory room = rooms[_roomId];
@@ -82,8 +84,8 @@ contract RockPaperScissors is BaseOwnerFunctional{
     function distribute(uint _roomId) public onlyRole(DISTRIBUTOR_ROLE){
         Room memory room = rooms[_roomId];
 
-        Player storage firstPlayer = room.firstPlayer;
-        Player storage secondPlayer = room.secondPlayer;
+        Player memory firstPlayer = room.firstPlayer;
+        Player memory secondPlayer = room.secondPlayer;
 
         if(firstPlayer.choice == secondPlayer.choice) {
             emit GameResult(address(0));
@@ -92,33 +94,33 @@ contract RockPaperScissors is BaseOwnerFunctional{
             assert(secondPlayer.choice == Choice.Paper || secondPlayer.choice == Choice.Scissors);
             if(secondPlayer.choice == Choice.Paper) {
                 // Rock loses to paper
-                emit GameResult(secondPlayer);
+                emit GameResult(secondPlayer.playerAddress);
             }
             else if(secondPlayer.choice == Choice.Scissors) {
                 // Rock beats scissors
-                emit GameResult(firstPlayer);
+                emit GameResult(firstPlayer.playerAddress);
             }
         }
         else if(firstPlayer.choice == Choice.Scissors) {
             assert(secondPlayer.choice == Choice.Paper || secondPlayer.choice == Choice.Rock);
             if(secondPlayer.choice == Choice.Rock) {
                 // Scissors lose to rock
-                emit GameResult(secondPlayer);
+                emit GameResult(secondPlayer.playerAddress);
             }
             else if(secondPlayer.choice == Choice.Paper) {
                 // Scissors beats paper
-                emit GameResult(firstPlayer);
+                emit GameResult(firstPlayer.playerAddress);
             }
         }
         else if(firstPlayer.choice == Choice.Paper) {
-            assert(secondPlayer.choice == Choice.Rock || players[1].choice == Choice.Scissors);
+            assert(secondPlayer.choice == Choice.Rock || secondPlayer.choice == Choice.Scissors);
             if(secondPlayer.choice == Choice.Scissors) {
                 // Paper loses to scissors
-                emit GameResult(secondPlayer);
+                emit GameResult(secondPlayer.playerAddress);
             }
             else if(secondPlayer.choice == Choice.Rock) {
                 // Paper beats rock
-                emit GameResult(firstPlayer);
+                emit GameResult(firstPlayer.playerAddress);
             }
         } else revert("Choice inccorect!");
     }
