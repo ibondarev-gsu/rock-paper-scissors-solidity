@@ -3,7 +3,9 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const hre = require("hardhat");
+const { ethers } = require("hardhat")
+
+let owner, firtsPlayer, secondPlayer, roomId, targetContract;
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -14,12 +16,13 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
 
-  await greeter.deployed();
+  [owner, firtsPlayer, secondPlayer, outsider] = await ethers.getSigners();
+  targetContract = await (await ethers.getContractFactory("RockPaperScissors", owner)).deploy();
+  await targetContract.deployed();
 
-  console.log("Greeter deployed to:", greeter.address);
+  console.log(targetContract.deployTransaction);
+  console.log(targetContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

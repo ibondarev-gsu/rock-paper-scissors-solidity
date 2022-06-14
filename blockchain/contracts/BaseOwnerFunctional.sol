@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -15,7 +16,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * `onlyOwner`, which can be applied to your functions to restrict their use to
  * the owner.
  */
-contract BaseOwnerFunctional is Ownable {
+contract BaseOwnerFunctional is Ownable, AccessControl {
 
     struct Player {
         address playerAddress;

@@ -19,7 +19,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <web3j.version>5.0.0</web3j.version>
+        <web3j.version>4.9.2</web3j.version>
     </properties>
 
     <dependencies>
@@ -33,12 +33,12 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-devtools</artifactId>-->
-<!--            <scope>runtime</scope>-->
-<!--            <optional>true</optional>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-devtools</artifactId>-->
+        <!--            <scope>runtime</scope>-->
+        <!--            <optional>true</optional>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -69,6 +69,16 @@
             <artifactId>core</artifactId>
             <version>${web3j.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.web3j</groupId>-->
+<!--            <artifactId>web3j-unit</artifactId>-->
+<!--            <version>4.9.2</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.beust</groupId>-->
+<!--            <artifactId>klaxon</artifactId>-->
+<!--            <version>5.6</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 
@@ -90,6 +100,23 @@
     </build>
 
     <repositories>
+
+<!--        <repository>-->
+<!--            <id>hyperledger-besu</id>-->
+<!--            <name>Hyperledger Besu Repository</name>-->
+<!--            <url>https://hyperledger.jfrog.io/ui/native/besu-maven</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>spring-release</id>-->
+<!--            <name>Hyperledger Besu Repository</name>-->
+<!--            <url>https://repo.spring.io/libs-release/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
@@ -98,17 +125,29 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
+
     </repositories>
 
     <pluginRepositories>
+<!--        <pluginRepository>-->
+<!--            <id>hyperledger-besu</id>-->
+<!--            <name>Hyperledger Besu Repository</name>-->
+<!--            <url>https://hyperledger.jfrog.io/ui/native/besu-maven</url>-->
+<!--        </pluginRepository>-->
         <pluginRepository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
             <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </pluginRepository>
+<!--        <pluginRepository>-->
+<!--            <id>spring-release</id>-->
+<!--            <name>Hyperledger Besu Repository</name>-->
+<!--            <url>https://repo.spring.io/libs-release/</url>-->
+<!--            <snapshots>-->
+<!--                <enabled>false</enabled>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
     </pluginRepositories>
 
 </project>

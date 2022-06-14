@@ -1,13 +1,20 @@
 package com.rockpaperscissors;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.web3j.protocol.Web3j;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.ContractGasProvider;
 
-@SpringBootTest
+//@SpringBootTest
+//@EVMTest(type = NodeType.GETH)
 class RockPaperScissorsApplicationTests {
 
+    @SneakyThrows
     @Test
-    void contextLoads() {
+    void contextLoads(Web3j web3j, TransactionManager transactionManager, ContractGasProvider gasProvider) {
+//        RockPaperScissors rockPaperScissors = RockPaperScissors.deploy(web3j, transactionManager, gasProvider).send();
+//        System.out.println(transactionManager.getFromAddress());
     }
 
 }
