@@ -17,12 +17,13 @@ async function main() {
 
   // We get the contract to deploy
 
-  [owner, firtsPlayer, secondPlayer, outsider] = await ethers.getSigners();
-  targetContract = await (await ethers.getContractFactory("RockPaperScissors", owner)).deploy();
+  [owner, firtsPlayer, secondPlayer, outsider, app] = await ethers.getSigners();
+  targetContract = await (await ethers.getContractFactory("RockPaperScissors", owner)).deploy(app);
   await targetContract.deployed();
 
   console.log(targetContract.deployTransaction);
   console.log(targetContract.address);
+  console.log(app.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

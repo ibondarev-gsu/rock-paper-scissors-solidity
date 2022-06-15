@@ -9,9 +9,10 @@ import "hardhat/console.sol";
 //Commit Reveal Schema 
 contract RockPaperScissors is BaseOwnerFunctional{
 
-    event Commit(uint indexed _id, address _player);
+    event FirstPlayerCommit(uint indexed _id, address _player);
+    event SecondPlayerCommit(uint indexed _id, address _player);
     event Reveal(uint indexed _id, address _player, Choice _choice);
-    event StageChanged(uint indexed _id, Stage _stage);
+    event StageChanged(uint indexed _id, address _player, Stage _stage);
     event Test(bytes _encode, bytes32 _keccak);
     event GameResult(address _winner);
 
@@ -21,8 +22,8 @@ contract RockPaperScissors is BaseOwnerFunctional{
     constructor(address distributor) BaseOwnerFunctional(distributor) {}
 
 
-    function commit(uint _roomId, bytes32 _commitment) public {
-        Room memory room = rooms[_roomId];
+    function commit(uint roomId, bytes32 commitment) public {
+        Room memory room = rooms[roomId];
         
         require(
             room.firstPlayer.playerAddress == msg.sender || room.secondPlayer.playerAddress == msg.sender,
@@ -34,27 +35,23 @@ contract RockPaperScissors is BaseOwnerFunctional{
         // Проверить разницу газа при сохрании порядковой переменной вместо if ебаного
         // Player memory player;
         if(room.firstPlayer.playerAddress == msg.sender) {
-            room.firstPlayer = setCommitment(room.firstPlayer, _commitment);
+            room.firstPlayer = _setCommitment(room.firstPlayer, commitment);
+            emit FirstPlayerCommit(roomId, msg.sender);
         } else {
-            room.secondPlayer = setCommitment(room.secondPlayer, _commitment);
+            room.secondPlayer = _setCommitment(room.secondPlayer, commitment);
+            emit SecondPlayerCommit(roomId,msg.sender);
         }
-
         // if(room.firstPlayer.playerAddress == msg.sender) {
         //     room.firstPlayer = player;
         // } else {
         //     room.secondPlayer = player;
         // }
-        if(room.firstPlayer.commited && room.secondPlayer.commited) {
-            room.stage = Stage.Reveal;
-            emit StageChanged(_roomId, room.stage);
-        }
-        rooms[_roomId] = room;
-        emit Commit(_roomId, msg.sender);
+        rooms[roomId] = room;
     }
 
     
-    function reveal(uint _roomId, Choice _choice, bytes32 _key) public {
-        Room memory room = rooms[_roomId];
+    function reveal(uint roomId, Choice choice, bytes32 key) public {
+        Room memory room = rooms[roomId];
 
         require(room.stage == Stage.Reveal, "Stage: wrong status!");
         require(
@@ -62,27 +59,28 @@ contract RockPaperScissors is BaseOwnerFunctional{
             "Player: is not in room!"
         );
         require(
-            _choice == Choice.Rock || _choice == Choice.Paper || _choice == Choice.Scissors, 
+            choice == Choice.Rock || choice == Choice.Paper || choice == Choice.Scissors, 
             "Choice: invalid choice!"
         );
 
         if(room.firstPlayer.playerAddress == msg.sender) {
-            room.firstPlayer = setReveal(room.firstPlayer, _choice, _key);
+            room.firstPlayer = _setReveal(room.firstPlayer, choice, key);
         } else {
-            room.secondPlayer = setReveal(room.secondPlayer, _choice, _key);
+            room.secondPlayer = _setReveal(room.secondPlayer, choice, key);
         }
 
-        if(room.firstPlayer.revealed && room.secondPlayer.revealed) {
-            room.stage = Stage.Distribute;
-            emit StageChanged(_roomId, room.stage);
-        }
+        // if(room.firstPlayer.revealed && room.secondPlayer.revealed) {
+        //     room.stage = Stage.Distribute;
+        //     emit StageChanged(roomId, room.stage);
+        // }
 
-        rooms[_roomId] = room;
-        emit Reveal(_roomId, msg.sender, _choice);
+        rooms[roomId] = room;
+        emit Reveal(roomId, msg.sender, choice);
     }
 
-    function distribute(uint _roomId) public onlyRole(DISTRIBUTOR_ROLE){
-        Room memory room = rooms[_roomId];
+
+    function distribute(uint roomId) external onlyRole(DISTRIBUTOR_ROLE){
+        Room memory room = rooms[roomId];
 
         Player memory firstPlayer = room.firstPlayer;
         Player memory secondPlayer = room.secondPlayer;
@@ -125,10 +123,15 @@ contract RockPaperScissors is BaseOwnerFunctional{
         } else revert("Choice inccorect!");
     }
 
-    
+    function changeStage(uint roomId, Stage stage) external onlyRole(DISTRIBUTOR_ROLE) {
+        if(rooms[roomId].stage == stage) {
+            revert("Incorrect stage");
+        }
+        rooms[roomId].stage = stage;
+    }
 
     //Проверить отличие газа с методом и без setCommitment
-    function setCommitment(Player memory _player, bytes32 _commitment) private pure returns(Player memory) {
+    function _setCommitment(Player memory _player, bytes32 _commitment) private pure returns(Player memory) {
         require(!_player.commited, "Player: already commited!");
         _player.commitment = _commitment;
         _player.commited = true;
@@ -136,7 +139,7 @@ contract RockPaperScissors is BaseOwnerFunctional{
     }
 
     //Проверить отличие газа с методом и без setReveal
-    function setReveal(Player memory _player, Choice _choice, bytes32 _key) private pure returns(Player memory) {
+    function _setReveal(Player memory _player, Choice _choice, bytes32 _key) private pure returns(Player memory) {
         require(!_player.revealed, "Player: already commited!");
         require(
             keccak256(abi.encode(_player.playerAddress, _choice, _key)) == _player.commitment, 
@@ -146,19 +149,19 @@ contract RockPaperScissors is BaseOwnerFunctional{
         return _player;
     }
 
-    function convertStringToBytes32(string memory source) external pure returns (bytes32 result) {
-        bytes memory tempEmptyStringTest = bytes(source);
-        if (tempEmptyStringTest.length == 0) {
-            return 0x0;
-        }
+    // function convertStringToBytes32(string memory source) external pure returns (bytes32 result) {
+    //     bytes memory tempEmptyStringTest = bytes(source);
+    //     if (tempEmptyStringTest.length == 0) {
+    //         return 0x0;
+    //     }
 
-        assembly {
-            result := mload(add(source, 32))
-        }
-    }
+    //     assembly {
+    //         result := mload(add(source, 32))
+    //     }
+    // }
 
-    function testHash(bytes32 _blindingFactor) external view returns(bytes memory encode, bytes32 keccak) { 
-        encode = abi.encode(msg.sender, Choice.Rock, _blindingFactor);
-        keccak = keccak256(encode);
-    }
+    // function testHash(bytes32 _blindingFactor) external view returns(bytes memory encode, bytes32 keccak) { 
+    //     encode = abi.encode(msg.sender, Choice.Rock, _blindingFactor);
+    //     keccak = keccak256(encode);
+    // }
 }

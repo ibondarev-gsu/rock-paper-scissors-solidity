@@ -1,15 +1,11 @@
 package com.rockpaperscissors;
 
-import com.rockpaperscissors.contracts.RockPaperScissors;
-import io.reactivex.schedulers.Schedulers;
 import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
-import org.web3j.tx.gas.DefaultGasProvider;
 
 import static org.web3j.protocol.core.DefaultBlockParameterName.EARLIEST;
 import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
@@ -21,45 +17,42 @@ public class RockPaperScissorsApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(RockPaperScissorsApplication.class, args);
 
-        Web3j web3j = run.getBean(Web3j.class);
+//        Web3j web3j = run.getBean(Web3j.class);
 
 //        String address = web3j.ethAccounts().send().getAccounts().get(1);
 
 //        String password = "JEKA"; // no encryption
 //        String ownerMnemonic = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
 //        String appMnemonic = "candy maple cake sugar pudding cream honey rich smooth crumble her treat";
-
+//
 //        Credentials ownerCredentials = WalletUtils.loadBip39Credentials(password, ownerMnemonic);
 //        Credentials appCredentials = WalletUtils.loadBip39Credentials(password, appMnemonic);
 //
 //        System.out.println("owner" + ownerCredentials.getEcKeyPair().getPrivateKey());
 //        System.out.println("app" + ownerCredentials);
 
-        Credentials owner = Credentials.create("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"); //private key - owner
-        String address = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; //address - other wallet
+//        Credentials owner = Credentials.create("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"); //private key - owner
+//        String address = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; //address - other wallet
 
-        RockPaperScissors rockPaperScissors = RockPaperScissors.deploy(web3j,
-                owner,
-                new DefaultGasProvider(),
-                address).send();
+//        System.out.println(rockPaperScissors.getContractAddress());
 
-        rockPaperScissors.stageChangedEventFlowable(EARLIEST, LATEST)
+//        rockPaperScissors.stageChangedEventFlowable(EARLIEST, LATEST)
 //                .subscribeOn(Schedulers.single())
-                .subscribe(stageChangedEventResponse -> {
-                    System.out.println(Thread.currentThread() + " => " + stageChangedEventResponse);
-                });
+//                .subscribe(stageChangedEventResponse -> {
+//                    System.out.println(Thread.currentThread() + " => " + stageChangedEventResponse.log);
+//                });
 
-        rockPaperScissors.roomCreatedEventFlowable(EARLIEST, LATEST)
+//        rockPaperScissors.roomCreatedEventFlowable(EARLIEST, LATEST)
 //                .subscribeOn(Schedulers.single())
-                .subscribe(stageChangedEventResponse -> {
-                    System.out.println(Thread.currentThread() + " => " + stageChangedEventResponse);
-                });
+//                .subscribe(stageChangedEventResponse -> {
+//                    System.out.println(Thread.currentThread() + " => " + stageChangedEventResponse);
+//                });
 
-        rockPaperScissors.commitEventFlowable(EARLIEST, LATEST)
+//        rockPaperScissors.commitEventFlowable(EARLIEST, LATEST)
 //                .subscribeOn(Schedulers.single())
-                .subscribe(stageChangedEventResponse -> {
-                    System.out.println(Thread.currentThread() + " => " + stageChangedEventResponse);
-                });
+//                .subscribe(stageChangedEventResponse -> {
+//                    System.out.println(Thread.currentThread() + " => " + stageChangedEventResponse);
+//                });
 //        Account #0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000 ETH)
 //        Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 

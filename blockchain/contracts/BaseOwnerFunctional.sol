@@ -63,17 +63,17 @@ contract BaseOwnerFunctional is AccessControl {
     uint private roomCount;
     mapping(uint => Room) public rooms;
 
-    event RoomCreated(uint _id, address _firstPlayer, address _secondPlayer, uint _blockNumber, uint _timestamp);
+    event RoomCreated(uint id, address firstPlayer, address secondPlayer, uint blockNumber, uint timestamp);
 
-    function createRoom(address _firstPlayerAddress, address _secondPlayerAddress) external onlyRole(OWNER_ROLE) {
-        require(_firstPlayerAddress != _secondPlayerAddress, "Address: same value!");
+    function createRoom(address firstPlayerAddress, address secondPlayerAddress) external onlyRole(OWNER_ROLE) {
+        require(firstPlayerAddress != secondPlayerAddress, "Address: same value!");
 
-        Player memory firstPlayer = Player(_firstPlayerAddress, false, false, Choice.None, bytes32(0));
-        Player memory secondPlayer = Player(_secondPlayerAddress, false, false, Choice.None, bytes32(0));
+        Player memory firstPlayer = Player(firstPlayerAddress, false, false, Choice.None, bytes32(0));
+        Player memory secondPlayer = Player(secondPlayerAddress, false, false, Choice.None, bytes32(0));
 
         rooms[roomCount] = Room(roomCount, firstPlayer, secondPlayer, Stage.Commit);
 
-        emit RoomCreated(roomCount, _firstPlayerAddress, _secondPlayerAddress, block.number, block.timestamp);
+        emit RoomCreated(roomCount, firstPlayerAddress, secondPlayerAddress, block.number, block.timestamp);
 
         roomCount++;
     }
