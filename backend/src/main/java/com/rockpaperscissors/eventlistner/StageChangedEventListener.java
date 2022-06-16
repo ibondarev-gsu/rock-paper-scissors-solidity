@@ -4,7 +4,6 @@ import com.rockpaperscissors.contracts.RockPaperScissors;
 import com.rockpaperscissors.dao.Dao;
 import com.rockpaperscissors.entity.Room;
 import com.rockpaperscissors.entity.enums.Stage;
-import com.rockpaperscissors.service.RockPaperScissorsService;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import lombok.extern.slf4j.Slf4j;
@@ -21,56 +20,45 @@ import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 @Slf4j
 @Component
-public class CommitEventListener {
+public class StageChangedEventListener {
 
     private final Dao dao;
     private final RockPaperScissors rockPaperScissors;
     private final Scheduler scheduler;
 
-    private final RockPaperScissorsService rockPaperScissorsService;
     private Disposable disposable;
 
-    public CommitEventListener(@NotNull Dao dao,
-                               @NotNull RockPaperScissors rockPaperScissors,
-                               @NotNull Scheduler scheduler,
-                               @NotNull RockPaperScissorsService rockPaperScissorsService) {
+    public StageChangedEventListener(@NotNull Dao dao,
+                                     @NotNull RockPaperScissors rockPaperScissors,
+                                     @NotNull Scheduler scheduler) {
         this.dao = dao;
         this.rockPaperScissors = rockPaperScissors;
         this.scheduler = scheduler;
-        this.rockPaperScissorsService = rockPaperScissorsService;
     }
 
     @PostConstruct
     private void postConstruct() {
-        disposable = rockPaperScissors.commitEventFlowable(EARLIEST, LATEST)
+        disposable = rockPaperScissors.stageChangedEventFlowable(EARLIEST, LATEST)// Тут нужно будет с бд брать последний обработанный EARLIEST
                 .subscribeOn(scheduler)
                 .subscribe(this::handle);
     }
 
-    private void handle(RockPaperScissors.CommitEventResponse eventResponse) {
+    private void handle(RockPaperScissors.StageChangedEventResponse eventResponse) {
         Optional<Room> roomOptional = dao.getRoomById(eventResponse.id);
         if (roomOptional.isEmpty()) {
             throw new IllegalArgumentException("Room with id={" + eventResponse.id + "} does not exist");
         }
-
         Room room = roomOptional.get();
-        if (room.getFirstPlayer().getAddress().equals(eventResponse.player)) {
-            room.getFirstPlayer().setCommited(true);
-            log.info("Set commited={true} for player={}", room.getFirstPlayer().getAddress());
-        } else if (room.getSecondPlayer().getAddress().equals(eventResponse.player)) {
-            room.getSecondPlayer().setCommited(true);
-            log.info("Set commited={true} for player={}", room.getSecondPlayer().getAddress());
-        } else {
-            throw new IllegalArgumentException("Player with address={" + eventResponse.player + "} does not exist");
-        }
-
-        if (room.getFirstPlayer().isCommited() && room.getSecondPlayer().isCommited()) {
-            rockPaperScissorsService.changeStage(room.getId(), Stage.REVEAL);
-        }
+        Stage prevStage = room.getStage();
+        Stage newStage = Stage.values()[eventResponse.stage.intValue()];
+        roomOptional.get().changeStage(newStage);
+        log.info("Stage changed from {} to {} for roomId={}", prevStage, newStage, room.getId());
     }
+
 
     @PreDestroy
     private void preDestroy() {
         disposable.dispose();
     }
+
 }

@@ -9,12 +9,10 @@ import "hardhat/console.sol";
 //Commit Reveal Schema 
 contract RockPaperScissors is BaseOwnerFunctional{
 
-    event FirstPlayerCommit(uint indexed _id, address _player);
-    event SecondPlayerCommit(uint indexed _id, address _player);
-    event Reveal(uint indexed _id, address _player, Choice _choice);
-    event StageChanged(uint indexed _id, address _player, Stage _stage);
-    event Test(bytes _encode, bytes32 _keccak);
-    event GameResult(address _winner);
+    event Commit(uint indexed id, address player);
+    event Reveal(uint indexed id, address player, Choice choice);
+    event Distributed(uint indexed id, Stage stage);
+    event StageChanged(uint indexed id, Stage stage);
 
     // bytes public encode;
     // bytes32 public keccak;
@@ -36,17 +34,12 @@ contract RockPaperScissors is BaseOwnerFunctional{
         // Player memory player;
         if(room.firstPlayer.playerAddress == msg.sender) {
             room.firstPlayer = _setCommitment(room.firstPlayer, commitment);
-            emit FirstPlayerCommit(roomId, msg.sender);
         } else {
             room.secondPlayer = _setCommitment(room.secondPlayer, commitment);
-            emit SecondPlayerCommit(roomId,msg.sender);
         }
-        // if(room.firstPlayer.playerAddress == msg.sender) {
-        //     room.firstPlayer = player;
-        // } else {
-        //     room.secondPlayer = player;
-        // }
+
         rooms[roomId] = room;
+        emit Commit(roomId, msg.sender);
     }
 
     
@@ -68,11 +61,6 @@ contract RockPaperScissors is BaseOwnerFunctional{
         } else {
             room.secondPlayer = _setReveal(room.secondPlayer, choice, key);
         }
-
-        // if(room.firstPlayer.revealed && room.secondPlayer.revealed) {
-        //     room.stage = Stage.Distribute;
-        //     emit StageChanged(roomId, room.stage);
-        // }
 
         rooms[roomId] = room;
         emit Reveal(roomId, msg.sender, choice);
@@ -128,6 +116,7 @@ contract RockPaperScissors is BaseOwnerFunctional{
             revert("Incorrect stage");
         }
         rooms[roomId].stage = stage;
+        emit StageChanged(roomId, stage);
     }
 
     //Проверить отличие газа с методом и без setCommitment

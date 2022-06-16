@@ -2,8 +2,6 @@ package com.rockpaperscissors.eventlistner;
 
 import com.rockpaperscissors.contracts.RockPaperScissors;
 import com.rockpaperscissors.dao.Dao;
-import com.rockpaperscissors.entity.Room;
-import com.rockpaperscissors.service.RockPaperScissorsService;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +16,14 @@ import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 @Slf4j
 @Component
-public class CreateRoomEventListener {
+public class GameResultEventListener {
 
     private final Dao dao;
     private final RockPaperScissors rockPaperScissors;
     private final Scheduler scheduler;
     private Disposable disposable;
 
-    public CreateRoomEventListener(@NotNull Dao dao,
+    public GameResultEventListener(@NotNull Dao dao,
                                    @NotNull RockPaperScissors rockPaperScissors,
                                    @NotNull Scheduler scheduler) {
         this.dao = dao;
@@ -35,22 +33,13 @@ public class CreateRoomEventListener {
 
     @PostConstruct
     private void postConstruct() {
-        disposable = rockPaperScissors.roomCreatedEventFlowable(EARLIEST, LATEST)// Тут нужно будет с бд брать последний обработанный EARLIEST
+        disposable = rockPaperScissors.gameResultEventFlowable(EARLIEST, LATEST)// Тут нужно будет с бд брать последний обработанный EARLIEST
                 .subscribeOn(scheduler)
                 .subscribe(this::handle);
     }
 
-    private void handle(RockPaperScissors.RoomCreatedEventResponse eventResponse) {
-        if (dao.getRoomById(eventResponse.id).isPresent()) {
-            throw new IllegalArgumentException("Room with id={" + eventResponse.id + "} already exist");
-        }
-        Room room = new Room(eventResponse.id,
-                eventResponse.firstPlayer,
-                eventResponse.secondPlayer,
-                eventResponse.timestamp,
-                eventResponse.blockNumber);
-        dao.saveRoom(eventResponse.id, room);
-        log.info("Created room = {}", room);
+    private void handle(RockPaperScissors.GameResultEventResponse eventResponse) {
+        log.info("Победил {} ", eventResponse.winner);
     }
 
     @PreDestroy

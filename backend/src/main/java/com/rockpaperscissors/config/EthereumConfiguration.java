@@ -25,8 +25,8 @@ public class EthereumConfiguration {
     private Integer port;
     @Value("${eth.ownerWalletPrivateKey}")
     private String ownerPrivateKey;
-    @Value("${eth.appWalletAddress}")
-    private String appAddress;
+    @Value("${eth.contractAddress}")
+    private String contractAddress;
 
     @Bean
     public Web3j web3j() {
@@ -35,7 +35,7 @@ public class EthereumConfiguration {
 
     @Bean
     public RockPaperScissors rockPaperScissors() {
-        return RockPaperScissors.load(appAddress, web3j(),
+        return RockPaperScissors.load(contractAddress, web3j(),
                 Credentials.create(ownerPrivateKey),
                 new DefaultGasProvider());
     }
