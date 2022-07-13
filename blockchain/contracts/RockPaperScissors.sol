@@ -13,8 +13,9 @@ contract RockPaperScissors is BaseOwnerFunctional{
     event Reveal(uint indexed id, address player, Choice choice);
     event Distributed(uint indexed id, Stage stage);
     event StageChanged(uint indexed id, Stage stage);
+    event GameResult(address winner);
 
-    // bytes public encode;
+    // bytes public encode; 
     // bytes32 public keccak;
 
     constructor(address distributor) BaseOwnerFunctional(distributor) {}

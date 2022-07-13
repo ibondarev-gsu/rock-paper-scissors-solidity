@@ -17,7 +17,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
  * the owner.
  */
 contract BaseOwnerFunctional is AccessControl {
-
     bytes32 public constant OWNER_ROLE = keccak256(abi.encodePacked("OWNER_ROLE"));
     bytes32 public constant ADMIN_ROLE = keccak256(abi.encodePacked("ADMIN_ROLE"));
     bytes32 public constant DISTRIBUTOR_ROLE = keccak256(abi.encodePacked("DISTRIBUTOR_ROLE"));
@@ -54,26 +53,43 @@ contract BaseOwnerFunctional is AccessControl {
     }
 
     struct Room {
-        uint id;
+        uint256 id;
         Player firstPlayer;
         Player secondPlayer;
         Stage stage;
     }
 
-    uint private roomCount;
-    mapping(uint => Room) public rooms;
+    uint256 private roomCount;
+    mapping(uint256 => Room) public rooms;
 
-    event RoomCreated(uint id, address firstPlayer, address secondPlayer, uint blockNumber, uint timestamp);
+    event RoomCreated(
+        uint256 id,
+        address firstPlayer,
+        address secondPlayer,
+        uint256 blockNumber,
+        uint256 timestamp
+    );
 
-    function createRoom(address firstPlayerAddress, address secondPlayerAddress) external onlyRole(OWNER_ROLE) {
-        require(firstPlayerAddress != secondPlayerAddress, "Address: same value!");
+    function createRoom(address firstPlayerAddress, address secondPlayerAddress) external 
+    // onlyRole(OWNER_ROLE) 
+    {
+        require(
+            firstPlayerAddress != secondPlayerAddress,
+            "Address: same value!"
+        );
 
         Player memory firstPlayer = Player(firstPlayerAddress, false, false, Choice.None, bytes32(0));
         Player memory secondPlayer = Player(secondPlayerAddress, false, false, Choice.None, bytes32(0));
 
         rooms[roomCount] = Room(roomCount, firstPlayer, secondPlayer, Stage.Commit);
 
-        emit RoomCreated(roomCount, firstPlayerAddress, secondPlayerAddress, block.number, block.timestamp);
+        emit RoomCreated(
+            roomCount,
+            firstPlayerAddress,
+            secondPlayerAddress,
+            block.number,
+            block.timestamp
+        );
 
         roomCount++;
     }
@@ -83,17 +99,25 @@ contract BaseOwnerFunctional is AccessControl {
      *
      * Emits a {RoleAdminChanged} event.
      */
-    function setRoleAdmin(bytes32 role, bytes32 adminRole) external onlyRole(OWNER_ROLE) {
+    function setRoleAdmin(bytes32 role, bytes32 adminRole)
+        external
+        onlyRole(OWNER_ROLE)
+    {
         _setRoleAdmin(role, adminRole);
     }
 
     //Скорее всего есть варик просмотреть эти данные не только владельцу
-    function getRoomCount() external view onlyRole(OWNER_ROLE) returns(uint){
+    function getRoomCount()
+        external
+        view
+        onlyRole(OWNER_ROLE)
+        returns (uint256)
+    {
         return roomCount;
     }
 
     //Тут тоже
-    function getRoomById(uint _id) public view returns(Room memory) {
+    function getRoomById(uint256 _id) public view returns (Room memory) {
         return rooms[_id];
     }
 }
