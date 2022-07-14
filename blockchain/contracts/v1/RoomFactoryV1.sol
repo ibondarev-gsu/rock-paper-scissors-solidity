@@ -7,7 +7,7 @@ contract RoomFactoryV1 {
 
     mapping(address => mapping(address => address)) public getRoom;
     address[] public allRooms;
-    address immutable bot;  
+    address immutable public bot;  
 
     constructor(address _bot) {
         bot = _bot;

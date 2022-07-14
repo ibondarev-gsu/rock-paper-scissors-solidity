@@ -56,7 +56,8 @@ contract RoomV1 is AccessControl {
         _grantRole(DISTRIBUTOR_ROLE, _distributor);
 
         distributor = _distributor;
-        initilize(playerA, playerB);
+        player0 = Player(playerA, false, false, Choice.None, bytes32(0));
+        player1 = Player(playerB, false, false, Choice.None, bytes32(0));
     }
 
     //think about gas optimization
@@ -89,9 +90,9 @@ contract RoomV1 is AccessControl {
             revert WrongChoice();
         }
         if(player0.playerAddress == msg.sender) {
-            setReveal(player0.playerAddress, choice, key);
+            setReveal(player0, choice, key);
         } else {
-            setReveal(player1.playerAddress, choice, key);
+            setReveal(player1, choice, key);
         }
         emit Reveal(address(this), msg.sender, choice);
     }
@@ -166,7 +167,6 @@ contract RoomV1 is AccessControl {
         if(keccak256(abi.encode(player.playerAddress, choice, key)) != player.commitment){
             revert InvalidHash();
         }
-        _player.revealed = true;
-        return _player;
+        player.revealed = true;
     }
 }
