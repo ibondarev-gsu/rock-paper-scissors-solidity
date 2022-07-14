@@ -46,6 +46,7 @@ contract RoomV1 is AccessControl {
     error WrongChoice();
     error AlreadyCommited();
     error AlreadyRevealed();
+    error InvalidHash();
 
     constructor(address playerA, address playerB, address _distributor) {
         _setRoleAdmin(OWNER_ROLE, OWNER_ROLE);
@@ -55,7 +56,7 @@ contract RoomV1 is AccessControl {
         _grantRole(DISTRIBUTOR_ROLE, _distributor);
 
         distributor = _distributor;
-        initizile(playerA, playerB);
+        initilize(playerA, playerB);
     }
 
     //think about gas optimization
@@ -162,10 +163,9 @@ contract RoomV1 is AccessControl {
         if(player.revealed){
             revert AlreadyCommited();
         }
-        require(
-            keccak256(abi.encode(_player.playerAddress, _choice, _key)) == _player.commitment, 
-            "Commitment: invalid hash!"
-        );
+        if(keccak256(abi.encode(player.playerAddress, choice, key)) != player.commitment){
+            revert InvalidHash();
+        }
         _player.revealed = true;
         return _player;
     }
