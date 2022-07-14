@@ -26,16 +26,14 @@ async function main() {
     );
   }
 
-  const [owner, app] = await ethers.getSigners();
-  const rockPaperScissorsContract = await (await ethers.getContractFactory("RockPaperScissors", owner)).deploy(app.address);
-  await rockPaperScissorsContract.deployed();
+  const [owner, bot] = await ethers.getSigners();
+  const roomFactoryV1 = await (await ethers.getContractFactory("RoomFactoryV1", owner)).deploy(bot.address);
+  await roomFactoryV1.deployed();
   console.log("Owner address =", owner.address);
-  console.log("App address =", app.address);
-  console.log("Contract address =", rockPaperScissorsContract.address);
+  console.log("Bot address =", bot.address);
+  console.log("Contract address =", roomFactoryV1.address);
 
-  saveFrontendFiles({
-    RockPaperScissors: rockPaperScissorsContract
-  })
+  saveFrontendFiles({RoomFactoryV1: roomFactoryV1})
 
 }
 

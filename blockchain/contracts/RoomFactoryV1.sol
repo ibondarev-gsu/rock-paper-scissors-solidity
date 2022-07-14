@@ -20,7 +20,7 @@ contract RoomFactoryV1 {
         (address player0, address player1) = playerA < playerB ? (playerA, playerB) : (playerB, playerA);
         require(player0 != address(0));
         require(getRoom[player0][player1] == address(0));
-        room = address(new RoomV1{salt: keccak256(abi.encode(player0, player1, bot))}(bot));
+        room = address(new RoomV1{salt: keccak256(abi.encode(player0, player1, bot))}(player0, player1, bot));
         getRoom[player0][player1] = room;
         getRoom[player1][player0] = room;
         emit RoomCreated(player0, player1, room);
