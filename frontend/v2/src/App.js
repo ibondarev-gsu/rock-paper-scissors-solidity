@@ -33,8 +33,8 @@ function App() {
   const [network, setNetwork] = useState();
   const [gameV2, setGameV2] = useState();
 
-  const [firstAddress, setFirstAddress] = useState("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
-  const [secondAddress, setSecondAddress] = useState("0x70997970C51812dc3A010C7d01b50e0d17dc79C8");
+  const [firstAddress, setFirstAddress] = useState("0x8a9c621B0d74Feeb3A09a9a5187D4d1Ef7bbc4E4");
+  const [secondAddress, setSecondAddress] = useState("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
 
   const [player0, setPlayer0] = useState("");
   const [player1, setPlayer1] = useState("");

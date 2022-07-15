@@ -3,14 +3,13 @@ package com.peartech;
 import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-public class GameV2 {
+public class GameV2Application {
 
     @SneakyThrows
     public static void main(String[] args) {
-        SpringApplication.run(GameV2.class, args);
+        SpringApplication.run(GameV2Application.class, args);
 
 //        Web3j web3j = run.getBean(Web3j.class);
 
