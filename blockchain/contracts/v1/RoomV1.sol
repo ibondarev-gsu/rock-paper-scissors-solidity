@@ -2,8 +2,9 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "./interfaces/IRoomV1.sol";
 
-contract RoomV1 is AccessControl {
+contract RoomV1 is IRoomV1, AccessControl {
 
     bytes32 public constant OWNER_ROLE = keccak256(abi.encodePacked("OWNER_ROLE"));
     bytes32 public constant DISTRIBUTOR_ROLE = keccak256(abi.encodePacked("DISTRIBUTOR_ROLE"));
@@ -13,40 +14,6 @@ contract RoomV1 is AccessControl {
     Player public player0;
     Player public player1;
     Stage public stage;
-
-    enum Stage {
-        Commit,
-        Reveal,
-        Distribute
-    }
-
-    enum Choice {
-        None,
-        Rock,
-        Paper,
-        Scissors
-    }
-
-    struct Player {
-        address playerAddress;
-        bool commited;
-        bool revealed;
-        Choice choice;
-        bytes32 commitment;
-    }
-
-    event Commit(address indexed room, address indexed player);
-    event Reveal(address indexed room, address indexed player, Choice choice);
-    event Distributed(uint indexed id, Stage stage);
-    event StageChanged(address indexed room, Stage stage);
-    event GameResult(address indexed room, address winner);
-
-    error PlayerNotExist();
-    error WrongStage();
-    error WrongChoice();
-    error AlreadyCommited();
-    error AlreadyRevealed();
-    error InvalidHash();
 
     constructor(address playerA, address playerB, address _distributor) {
         _setRoleAdmin(OWNER_ROLE, OWNER_ROLE);
@@ -61,7 +28,7 @@ contract RoomV1 is AccessControl {
     }
 
     //think about gas optimization
-    function commit(bytes32 commitment) public {
+    function commit(bytes32 commitment) external override {
         if(player0.playerAddress != msg.sender && player1.playerAddress != msg.sender){
             revert PlayerNotExist();
         }
@@ -79,7 +46,7 @@ contract RoomV1 is AccessControl {
         emit Commit(address(this), msg.sender);
     }
 
-    function reveal(Choice choice, bytes32 key) public {
+    function reveal(Choice choice, bytes32 key) external override {
         if(player0.playerAddress != msg.sender && player1.playerAddress != msg.sender){
             revert PlayerNotExist();
         }
