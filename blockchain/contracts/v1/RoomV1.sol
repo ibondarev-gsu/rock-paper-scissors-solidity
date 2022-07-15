@@ -64,7 +64,7 @@ contract RoomV1 is IRoomV1, AccessControl {
         emit Reveal(address(this), msg.sender, choice);
     }
 
-    function distribute() external onlyRole(DISTRIBUTOR_ROLE){
+    function distribute() external onlyRole(DISTRIBUTOR_ROLE) override {
         if(player0.choice == player1.choice) {
             emit GameResult(address(this), address(0));
         } 

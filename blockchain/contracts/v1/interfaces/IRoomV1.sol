@@ -38,4 +38,6 @@ interface IRoomV1 {
     error InvalidHash();
 
     function commit(bytes32 commitment) external;
+    function reveal(Choice choice, bytes32 key) external;
+    function distribute() external;
 }
