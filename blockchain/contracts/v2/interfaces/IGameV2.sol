@@ -26,12 +26,14 @@ interface IGameV2 {
 
     struct Room {
         uint256 id;
-        Player firstPlayer;
-        Player secondPlayer;
+        Player player0;
+        Player player1;
         Stage stage;
+        uint256 gameCounter;
     }
 
     error PlayerNotExist();
+    error RoomNotExist();
     error WrongStage();
     error WrongChoice();
     error AlreadyCommited();
@@ -39,6 +41,12 @@ interface IGameV2 {
     error InvalidHash();
 
     event RoomCreated(address indexed player0, address indexed player1, uint256 roomId);
+    event Commited(uint256 indexed roomId, address indexed player);
+    event Revealed(uint256 indexed roomId, address indexed player, Choice choice);
+    event Distributed(uint256 indexed roomId, Stage stage);
+    event StageChanged(uint256 indexed roomId, Stage stage);
+    event GameResult(uint256 indexed roomId, address winner);
 
-    function createRoom(address playerA, address playerB) external returns (uint256);
+    function createRoom(address playerA, address playerB) external;
+    function commit(uint256 roomId, bytes32 commitment) external;
 }

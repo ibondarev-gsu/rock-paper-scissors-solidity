@@ -1,5 +1,5 @@
-const { expect } = require("chai")
-const { ethers } = require("hardhat")
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
 const { v4: uuidv4 } = require('uuid');
 
 let owner, firtsPlayer, secondPlayer, roomId, targetContract;
