@@ -27,14 +27,17 @@ async function main() {
   }
 
   const [owner, bot] = await ethers.getSigners();
+
   const roomFactoryV1 = await (await ethers.getContractFactory("RoomFactoryV1", owner)).deploy(bot.address);
   await roomFactoryV1.deployed();
+
+  const roomV1 = await ethers.getContractFactory("RoomV1");
+
   console.log("Owner address =", owner.address);
   console.log("Bot address =", bot.address);
-  console.log("Contract address =", roomFactoryV1.address);
+  console.log("RoomFactoryV1 address =", roomFactoryV1.address);
 
-  saveFrontendFiles({RoomFactoryV1: roomFactoryV1})
-
+  saveFrontendFiles({RoomFactoryV1: roomFactoryV1, RoomV1: roomV1});
 }
 
 function saveFrontendFiles(contracts) {
@@ -45,7 +48,7 @@ function saveFrontendFiles(contracts) {
 
   Object.entries(contracts).forEach(contractItem => {
     const [name, contract] = contractItem;
-    if(contract) {
+    if(contract && contract.address) {
       fs.writeFileSync(
         path.join(contractsDir, "/", name + "-contract-address.json"),
         JSON.stringify({[name]: contract.address}, undefined, 2)

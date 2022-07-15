@@ -39,8 +39,8 @@ describe("RockPaperScissors",  () => {
         
         //TEST 1
         it("first player execute commit contract method", async () => {
-            const key = generateKey();
-            const encode = abiCoder.encode(["address", "uint256", "bytes32"], [firtsPlayer.address, Rock, key]);
+            const salt = generateKey();
+            const encode = abiCoder.encode(["address", "uint256", "bytes32"], [firtsPlayer.address, Rock, salt]);
             const commintment = keccak256(encode);
         
             const tx = await targetContract.connect(firtsPlayer).commit(roomId, commintment);
