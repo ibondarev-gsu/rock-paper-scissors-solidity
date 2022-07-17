@@ -39,6 +39,10 @@ const Reveal = 1;
 const Distribute = 2;
 
 const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545/");
+let emitterRoomCreated;
+let emitterCommited;
+let emitterRevealed;
+let emitterStageChanged;
 
 function App() {
   const [account, setAccount] = useState();
@@ -54,7 +58,7 @@ function App() {
   const [roomId, setRoomId] = useState("");
   const [room, setRoom] = useState(null);
   const [salt, setSalt] = useState();
-  const [isCommited = setIsCommited] = useState(false);
+  const [isCommited, setIsCommited] = useState(false);
   const [choice, setChoice] = useState();
 
   useEffect(() => {
@@ -74,28 +78,35 @@ function App() {
 
   useEffect(() => {
     if (gameV2) {
-      // gameV2.events.RoomCreated(
-      //   {
-      //     filter: {
-      //       value: [],
-      //     },
-      //     fromBlock: "latest",
-      //   },
-      //   (error, event) => {
-      //     console.log(error, event);
-      //   }
-      // );
-      gameV2.events
+
+      console.log("emitterRoomCreated", emitterRoomCreated);
+      emitterRoomCreated = gameV2.events
         .RoomCreated({
-          // filter: {
-          //   value: [],
-          // },
+          filter: {
+            value: [],
+          },
           fromBlock: "latest",
         })
-        .on("data", (event) => console.log('event', event))
+        .on("data", handleRoomCreateEvent)
         .on("changed", (changed) => console.log('changed', changed))
         .on("error", (err) => console.log('err', err))
         .on("connected", (str) => console.log('connected to RoomCreated', str));
+
+        
+        // emitterRoomCreated.removeAllListeners();
+        // console.log("emitterRoomCreated", emitterRoomCreated);
+        // gameV2.events
+        // .RoomCreated({
+        //   // filter: {
+        //   //   value: [],
+        //   // },
+        //   fromBlock: "latest",
+        // })
+        // .on("data", handleRoomCreateEvent)
+        // .on("changed", (changed) => console.log('changed', changed))
+        // .on("error", (err) => console.log('err', err))
+        // .on("connected", (str) => console.log('connected to RoomCreated', str));
+
       // .on("connected", subscriptionId => {console.log('subscriptionId', subscriptionId)})
       // .on('data', event => console.log("Room", event))
       // .on
@@ -119,6 +130,60 @@ function App() {
     }
   }, [gameV2]);
 
+  
+  useEffect(() => {
+    if (room) {
+      // console.log("emitterCommited", emitterCommited);
+      // if(emitterCommited) {
+      //   emitterCommited.removeAllListeners();
+      // }
+      // emitterCommited = gameV2.events
+      // .Commited({
+      //   filter: {
+      //     roomId: room.id,
+      //   },
+      //   fromBlock: "latest",
+      // })
+      // .on("data", handleCommitedEvent)
+      // .on("changed", (changed) => console.log('changed', changed))
+      // .on("error", (err) => console.log('err', err))
+      // .on("connected", (str) => console.log('connected to Commited', str));
+
+      // console.log("emitterRevealed", emitterRevealed);
+      // if(emitterRevealed) {
+      //   emitterRevealed.removeAllListeners();
+      // }
+      // emitterRevealed = gameV2.events
+      // .Revealed({
+      //   filter: {
+      //     roomId: room.id,
+      //   },
+      //   fromBlock: "latest",
+      // })
+      // .on("data", (data) => console.log(data))
+      // .on("changed", (changed) => console.log('changed', changed))
+      // .on("error", (err) => console.log('err', err))
+      // .on("connected", (str) => console.log('connected to Revealed', str));
+
+      // console.log("emitterStageChanged", emitterStageChanged);
+      // if(emitterStageChanged) {
+      //   emitterStageChanged.removeAllListeners();
+      // }
+      // emitterStageChanged = gameV2.events
+      // .StageChanged({
+      //   filter: {
+      //     roomId: room.id,
+      //   },
+      //   fromBlock: "latest",
+      // })
+      // .on("data", (data) => console.log('data', data))
+      // .on("changed", (changed) => console.log('changed', changed))
+      // .on("error", (err) => console.log('err', err))
+      // .on("connected", (str) => console.log('connected to StageChanged', str));
+
+    }
+  }, [room]);
+
   const loadBlockChainData = async () => {
     const network = await web3.eth.net.getNetworkType();
     const accounts = await web3.eth.requestAccounts();
@@ -132,13 +197,15 @@ function App() {
 
   const connectToRoom = async () => {
     const room = await gameV2.methods.getRoomById(roomId).call();
+    console.log(room.player0.playerAddress)
+    console.log(room.player1.playerAddress)
+    console.log(account)
     if(room.player0.playerAddress !== account && room.player1.playerAddress !== account){
       console.log("Invalid roomId");
       return;
     }
-    room.player0 !== account ? setOpponent(room.player0.playerAddress) : setOpponent(room.player.playerAddress)
-      
-    setRoom(await gameV2.methods.getRoomById(roomId).call());
+    room.player0 !== account ? setOpponent(room.player0.playerAddress) : setOpponent(room.player1.playerAddress)
+    setRoom(room);
   };
 
   const createRoom = async () => {
@@ -169,10 +236,26 @@ function App() {
 
   const reveal = async () => {
     const tx = await gameV2.methods.reveal(Rock, salt).send({ from: account });
+    console.log(reveal);
   };
 
-  const handleRoomCreateEvent = () => {
+  const handleRoomCreateEvent = async (event) => {
+    if(event.returnValues.player0 !== account && event.returnValues.player1 !== account){
+      console.log("Room not for you");
+      return;
+    }
+    event.returnValues.player0 !== account ? setOpponent(event.returnValues.player0) : setOpponent(event.returnValues.player1)
+    setRoom(await gameV2.methods.getRoomById(event.returnValues.roomId).call());
+    console.log("Some one created room for you");
+  };
 
+  const handleCommitedEvent = (event) => {
+    console.log("TYT")
+    if(event.returnValues.player === account){
+      console.log("You commited");
+      return;
+    }
+    console.log("Opponent has commited");
   };
 
 
