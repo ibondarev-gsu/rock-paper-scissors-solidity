@@ -17,16 +17,16 @@ import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 @Slf4j
 @Component
-public class CreateRoomEventListener {
+public class RoomCreatedEventListener {
 
     private final Dao dao;
     private final GameV2 gameV2;
     private final Scheduler scheduler;
     private Disposable disposable;
 
-    public CreateRoomEventListener(@NotNull Dao dao,
-                                   @NotNull GameV2 gameV2,
-                                   @NotNull Scheduler scheduler) {
+    public RoomCreatedEventListener(@NotNull Dao dao,
+                                    @NotNull GameV2 gameV2,
+                                    @NotNull Scheduler scheduler) {
         this.dao = dao;
         this.gameV2 = gameV2;
         this.scheduler = scheduler;

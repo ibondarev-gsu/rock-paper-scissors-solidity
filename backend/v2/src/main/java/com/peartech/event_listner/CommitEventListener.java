@@ -66,6 +66,7 @@ public class CommitEventListener {
 
         if (room.getPlayer0().isCommited() && room.getPlayer1().isCommited()) {
             gameV2Service.nextStage(room.getId(), Stage.REVEAL);
+            log.info("Changed stage for roomId={} from commit to reveal", room.getId());
         }
     }
 
