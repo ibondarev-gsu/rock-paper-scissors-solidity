@@ -61,6 +61,28 @@ contract GameV2 is IGameV2, AccessControl {
         emit Commited(roomId, msg.sender);
     }
 
+    function reveal(uint256 roomId, Choice choice, bytes32 key) external override {
+        Room storage room = getRoomById[roomId];
+        if(room.id == 0) {
+            revert RoomNotExist();
+        }
+        if(room.player0.playerAddress != msg.sender && room.player1.playerAddress != msg.sender){
+            revert PlayerNotExist();
+        }
+        if (room.stage != Stage.Reveal) {
+            revert WrongStage();
+        }
+        if(choice != Choice.Rock && choice != Choice.Paper && choice != Choice.Scissors){
+            revert WrongChoice();
+        }
+        if(room.player0.playerAddress == msg.sender) {
+            setReveal(room.player0, choice, key);
+        } else {
+            setReveal(room.player1, choice, key);
+        }
+        emit Revealed(roomId, msg.sender, choice);
+    }
+
     function nextStage(uint256 roomId, Stage stage) external onlyRole(DISTRIBUTOR_ROLE) {
         Room storage room = getRoomById[roomId];
         if(room.stage == stage) {
@@ -76,5 +98,15 @@ contract GameV2 is IGameV2, AccessControl {
         }
         player.commitment = commitment;
         player.commited = true;
+    }
+
+    function setReveal(Player storage player, Choice choice, bytes32 key) private {
+        if(player.revealed){
+            revert AlreadyRevealed();
+        }
+        if(keccak256(abi.encode(player.playerAddress, choice, key)) != player.commitment){
+            revert InvalidHash();
+        }
+        player.revealed = true;
     }
 }

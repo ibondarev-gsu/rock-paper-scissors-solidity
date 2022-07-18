@@ -49,4 +49,5 @@ interface IGameV2 {
 
     function createRoom(address playerA, address playerB) external;
     function commit(uint256 roomId, bytes32 commitment) external;
+    function reveal(uint256 roomId, Choice choice, bytes32 key) external;
 }
