@@ -37,7 +37,7 @@ contract GameV2 is IGameV2, AccessControl {
         getRoomById[roomCounter] = Room(roomCounter, player0, player1, Stage.Commit, 0);
         getRoomByPlayerAddresses[player0Address][player1Address] = roomCounter;
         getRoomByPlayerAddresses[player1Address][player0Address] = roomCounter;
-        emit RoomCreated(player0Address, player1Address, roomCounter); 
+        emit RoomCreated(roomCounter, player0Address, player1Address); 
     }
 
     function commit(uint256 roomId, bytes32 commitment) external override {
@@ -83,7 +83,50 @@ contract GameV2 is IGameV2, AccessControl {
         emit Revealed(roomId, msg.sender, choice);
     }
 
-    function nextStage(uint256 roomId, Stage stage) external onlyRole(DISTRIBUTOR_ROLE) {
+    function distribute(uint256 roomId) external onlyRole(DISTRIBUTOR_ROLE) override {
+        Room storage room = getRoomById[roomId];
+        if(room.player0.choice == room.player1.choice) {
+            emit GameResult(roomId, address(0), 0);
+        } 
+        else if(room.player0.choice == Choice.Rock) {            
+            assert(room.player1.choice == Choice.Paper || room.player1.choice == Choice.Scissors);
+            if(room.player1.choice == Choice.Paper) {
+                // Rock loses to paper
+                emit GameResult(roomId, room.player1.playerAddress, room.gameId);
+            }
+            else if(room.player1.choice == Choice.Scissors) {
+                // Rock beats scissors
+                emit GameResult(roomId, room.player0.playerAddress, room.gameId);
+            }
+        }
+        else if(room.player0.choice == Choice.Scissors) {
+            assert(room.player1.choice == Choice.Paper || room.player1.choice == Choice.Rock);
+            if(room.player1.choice == Choice.Rock) {
+                // Scissors lose to rock
+                emit GameResult(roomId, room.player1.playerAddress, room.gameId);
+            }
+            else if(room.player1.choice == Choice.Paper) {
+                // Scissors beats paper
+                emit GameResult(roomId, room.player0.playerAddress, room.gameId);
+            }
+        }
+        else if(room.player0.choice == Choice.Paper) {
+            assert(room.player1.choice == Choice.Rock || room.player1.choice == Choice.Scissors);
+            if(room.player1.choice == Choice.Scissors) {
+                // Paper loses to scissors
+                emit GameResult(roomId, room.player1.playerAddress, room.gameId);
+            }
+            else if(room.player1.choice == Choice.Rock) {
+                // Paper beats rock
+                emit GameResult(roomId, room.player0.playerAddress, room.gameId);
+            }
+        } else revert("Choice inccorect!");
+        reset(room.player0);
+        reset(room.player1);
+        room.gameId++;
+    }
+
+    function nextStage(uint256 roomId, Stage stage) external onlyRole(DISTRIBUTOR_ROLE) override {
         Room storage room = getRoomById[roomId];
         if(room.stage == stage) {
             revert WrongStage();
@@ -108,5 +151,12 @@ contract GameV2 is IGameV2, AccessControl {
             revert InvalidHash();
         }
         player.revealed = true;
+    }
+
+    function reset(Player storage player) private {
+        player.commited = false;
+        player.revealed = false;
+        player.choice = Choice.None;
+        player.commitment = bytes32(0);
     }
 }

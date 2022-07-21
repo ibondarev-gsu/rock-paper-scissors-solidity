@@ -200,7 +200,7 @@ function App() {
   const commit = async () => {
     const salt = getSalt();
     setSalt(salt);
-    localStorage.setItem('salt', salt);
+    localStorage.setItem('salt' + room.id, salt);
     const encode = abiCoder.encode(
       ["address", "uint256", "bytes32"],
       [account, Rock, salt]
@@ -209,6 +209,7 @@ function App() {
     const tx = await gameV2.methods
       .commit(room.id, commintment)
       .send({ from: account });
+      
     setRoom(await gameV2.methods.getRoomById(room.id).call());
     // if(room.player0.playerAddress.toLowerCase() === account) {
     //   console.log("1")
@@ -220,7 +221,7 @@ function App() {
   };
 
   const reveal = async () => {
-    await gameV2.methods.reveal(room.id, Rock, localStorage.getItem('salt')).send({ from: account });
+    await gameV2.methods.reveal(room.id, Rock, localStorage.getItem('salt' + room.id)).send({ from: account });
   };
 
   const getPlayer = (room, account) => {
