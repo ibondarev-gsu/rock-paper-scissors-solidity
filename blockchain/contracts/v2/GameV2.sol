@@ -3,6 +3,7 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./interfaces/IGameV2.sol";
+import "./Rops.sol";
 
 contract GameV2 is IGameV2, AccessControl {
     bytes32 public constant OWNER_ROLE = keccak256(abi.encodePacked("OWNER_ROLE"));
@@ -13,8 +14,9 @@ contract GameV2 is IGameV2, AccessControl {
     uint256 private roomCounter;
 
     address immutable public distributor;  
+    Rops immutable public rops;  
 
-    constructor(address _distributor) {
+    constructor(address _distributor, Rops _rops) {
         _setRoleAdmin(OWNER_ROLE, OWNER_ROLE);
         _setRoleAdmin(DISTRIBUTOR_ROLE, OWNER_ROLE);
 
@@ -22,6 +24,7 @@ contract GameV2 is IGameV2, AccessControl {
         _grantRole(DISTRIBUTOR_ROLE, _distributor);
 
         distributor = _distributor;
+        rops = _rops;
     }
 
     function createRoom(address playerA, address playerB) external override {
@@ -41,6 +44,7 @@ contract GameV2 is IGameV2, AccessControl {
     }
 
     function commit(uint256 roomId, bytes32 commitment) external override {
+        
         Room storage room = getRoomById[roomId];
         if(room.id == 0) {
             revert RoomNotExist();
