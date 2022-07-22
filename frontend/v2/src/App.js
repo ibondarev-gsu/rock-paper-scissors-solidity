@@ -13,8 +13,9 @@ import Web3 from "web3";
 // import { web3 } from "./web3";
 
 const GAME_V2_ABI = require("./contracts/GameV2.json").abi;
-const GAME_V2_ADDRESS =
-  require("./contracts/GameV2-contract-address.json").GameV2;
+const GAME_V2_ADDRESS = require("./contracts/GameV2-contract-address.json").GameV2;
+const ROPS_ABI = require("./contracts/Rops.json").abi;
+const ROPS_ADDRESS = require("./contracts/Rops-contract-address.json").Rops;
 
 //refactor to web3.js dependency
 import { ethers } from "ethers";
@@ -51,6 +52,9 @@ function App() {
   const [opponent, setOpponent] = useState();
   const [network, setNetwork] = useState();
   const [gameV2, setGameV2] = useState();
+  const [rops, setRops] = useState();
+  const [ropsBalance, setRopsBalance] = useState();
+  const [ropsAllowance, setRopsAllowance] = useState();
 
   // const [player0, setPlayer0] = useState("");
   // const [player1, setPlayer1] = useState("");
@@ -75,7 +79,11 @@ function App() {
     console.log('Одинаковый регистр', accounts[0].toLowerCase() === accounts[0]);
     setNetwork(network);
     const gameV2 = new web3.eth.Contract(GAME_V2_ABI, GAME_V2_ADDRESS);
+    const rops = new web3.eth.Contract(ROPS_ABI, ROPS_ADDRESS);
     setGameV2(gameV2);
+    setRops(rops);
+    setRopsBalance(await rops.methods.balanceOf(accounts[0]).call());
+    setRopsAllowance(await rops.methods.allowance(accounts[0], GAME_V2_ADDRESS).call());
   }, []);
 
   //checks for changes in metamask
@@ -228,11 +236,25 @@ function App() {
     return room.player0.playerAddress.toLowerCase() === account ? room.player0 : room.player1;
   }
 
+  const approve = async () => {
+    console.log(await rops.methods.approve(GAME_V2_ADDRESS, 10).send({ from: account }));
+  }
+
   return (
     <div>
       {/* {account ? 
         <> */}
-          Account: {account}; Network: {network}
+          Account: {account}; Network: {network}; Balance: {ropsBalance}; Allowance: {ropsAllowance};
+          {ropsAllowance &&             
+            <Button
+                onClick={approve}
+                variant="outlined"
+                color="primary"
+                style={{ marginTop: 10 }}
+              >
+                Add 10 Rops
+            </Button>
+          }
           <Box>
             Box for create Room
             <TextField

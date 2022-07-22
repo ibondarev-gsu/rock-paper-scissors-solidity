@@ -26,10 +26,12 @@ async function main() {
     );
   }
 
+  const [owner, bot] = await ethers.getSigners();
+
   const rops = await (await ethers.getContractFactory("Rops", owner)).deploy(Object.values(users).map(a => a.address));
   await rops.deployed();
 
-  const [owner, bot] = await ethers.getSigners();
+  
   const gameV2 = await (await ethers.getContractFactory("GameV2", owner)).deploy(bot.address, rops.address);
   await gameV2.deployed();
 
