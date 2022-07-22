@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import Web3 from "web3";
 import {
   Box,
   Table,
@@ -8,8 +10,11 @@ import {
   TextField,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import React, { useEffect, useState } from "react";
-import Web3 from "web3";
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+
 // import { web3 } from "./web3";
 
 const GAME_V2_ABI = require("./contracts/GameV2.json").abi;
@@ -211,8 +216,9 @@ function App() {
     localStorage.setItem('salt' + room.id, salt);
     const encode = abiCoder.encode(
       ["address", "uint256", "bytes32"],
-      [account, Rock, salt]
+      [account, localStorage.getItem('choice' + room.id), salt]
     );
+    console.log("choice ", localStorage.getItem('choice' + room.id));
     const commintment = keccak256(encode);
     const tx = await gameV2.methods
       .commit(room.id, commintment)
@@ -228,8 +234,14 @@ function App() {
     // }
   };
 
+  const handleSelect = (e) => {
+    (e) => setChoice(e.target.value);
+    localStorage.setItem('choice' + room.id, e.target.value);
+  }
+
   const reveal = async () => {
-    await gameV2.methods.reveal(room.id, Rock, localStorage.getItem('salt' + room.id)).send({ from: account });
+    await gameV2.methods.reveal(room.id, localStorage.getItem('choice' + room.id), localStorage.getItem('salt' + room.id)).send({ from: account });
+    setRoom(await gameV2.methods.getRoomById(roomId).call());
   };
 
   const getPlayer = (room, account) => {
@@ -255,6 +267,7 @@ function App() {
                 Add 10 Rops
             </Button>
           }
+
           <Box>
             Box for create Room
             <TextField
@@ -275,6 +288,7 @@ function App() {
               Create Room
             </Button>
           </Box>
+
           <Box>
             Box for connect to room
             <TextField
@@ -293,8 +307,12 @@ function App() {
               Connect To Room
             </Button>
           </Box>
+
+
           {room && (
             <>
+
+              {/* info table */}
               <Table>
                 <TableHead>
                   <TableRow>
@@ -316,9 +334,24 @@ function App() {
                 </TableBody>
               </Table>
 
+
+              {/* commit */}
               {(!getPlayer(room, account).commited && room.stage == Commit) && 
                 <>
-                {console.log(room)}
+                <FormControl fullWidth>
+                  <InputLabel id="select-label">None</InputLabel>
+                  <Select
+                    labelId="select-label"
+                    id="demo-simple-select"
+                    value={choice}
+                    label="None"
+                    onChange={handleSelect}
+                  >
+                    <MenuItem value={Rock}>Rock</MenuItem>
+                    <MenuItem value={Paper}>Paper</MenuItem>
+                    <MenuItem value={Scissors}>Scissors</MenuItem>
+                  </Select>
+                </FormControl>
                 <Button
                   onClick={commit}
                   variant="outlined"
@@ -330,6 +363,7 @@ function App() {
                 </>
               }
 
+              {/* reveal */}
               {(getPlayer(room, account).commited && !getPlayer(room, account).revealed && room.stage == Reveal) &&
                 <>
                   <Button

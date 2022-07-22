@@ -26,7 +26,8 @@ async function main() {
     );
   }
 
-  const [owner, bot] = await ethers.getSigners();
+  const users = await ethers.getSigners();
+  const [owner, bot] = users;
 
   const rops = await (await ethers.getContractFactory("Rops", owner)).deploy(Object.values(users).map(a => a.address));
   await rops.deployed();

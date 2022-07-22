@@ -131,9 +131,9 @@ contract GameV2 is IGameV2, AccessControl {
                 rops.transferFrom(room.player1.playerAddress, room.player0.playerAddress, 1);
             }
         } else revert("Choice inccorect!");
-        reset(room.player0);
-        reset(room.player1);
-        room.gameId++;
+        // reset(room.player0);
+        // reset(room.player1);
+        // room.gameId++;
     }
 
     function nextStage(uint256 roomId, Stage stage) external onlyRole(DISTRIBUTOR_ROLE) override {
@@ -160,6 +160,7 @@ contract GameV2 is IGameV2, AccessControl {
         if(keccak256(abi.encode(player.playerAddress, choice, key)) != player.commitment){
             revert InvalidHash();
         }
+         player.choice = choice;
         player.revealed = true;
     }
 
