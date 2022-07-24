@@ -237,20 +237,23 @@ function App() {
   const handleSelect = (e) => {
     (e) => setChoice(e.target.value);
     localStorage.setItem('choice' + room.id, e.target.value);
-  }
+  };
 
   const reveal = async () => {
     await gameV2.methods.reveal(room.id, localStorage.getItem('choice' + room.id), localStorage.getItem('salt' + room.id)).send({ from: account });
-    setRoom(await gameV2.methods.getRoomById(roomId).call());
+    console.log(localStorage.getItem('choice' + room.id));
+    console.log(localStorage.getItem('salt' + room.id));
+    // await gameV2.methods.reveal(room.id, localStorage.getItem('choice' + room.id), localStorage.getItem('salt' + room.id)).send({ from: account });
+    // setRoom(await gameV2.methods.getRoomById(roomId).call());
   };
 
   const getPlayer = (room, account) => {
     return room.player0.playerAddress.toLowerCase() === account ? room.player0 : room.player1;
-  }
+  };
 
   const approve = async () => {
     console.log(await rops.methods.approve(GAME_V2_ADDRESS, 10).send({ from: account }));
-  }
+  };
 
   return (
     <div>

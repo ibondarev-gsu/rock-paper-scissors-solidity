@@ -11,12 +11,12 @@ import java.math.BigInteger;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class GameV2ServiceImlp implements GameV2Service {
+public class GameV2ServiceImpl implements GameV2Service {
 
     private final Web3j web3j;
     private final GameV2 gameV2;
 
-    public GameV2ServiceImlp(@NotNull Web3j web3j, @NotNull GameV2 gameV2) {
+    public GameV2ServiceImpl(@NotNull Web3j web3j, @NotNull GameV2 gameV2) {
         this.web3j = web3j;
         this.gameV2 = gameV2;
     }
@@ -28,7 +28,6 @@ public class GameV2ServiceImlp implements GameV2Service {
 
     @Override
     public CompletableFuture<TransactionReceipt> distribute(@NotNull BigInteger roomId) {
-//        return gameV2(roomId).sendAsync();
-        return null;
+        return gameV2.distribute(roomId).sendAsync();
     }
 }
