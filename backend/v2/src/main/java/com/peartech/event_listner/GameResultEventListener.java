@@ -47,14 +47,10 @@ public class GameResultEventListener {
             throw new IllegalArgumentException("Room with id={" + eventResponse.roomId + "} does not exist");
         }
         Room room = roomOptional.get();
-        reset(room.getPlayer0());
-        reset(room.getPlayer1());
+        room.getPlayer0().reset();
+        room.getPlayer1().reset();
         room.incGameId();
         log.info("In roomId={} won player={}", eventResponse.roomId, eventResponse.winner);
-    }
-
-    private void reset(Player player) {
-
     }
 
     @PreDestroy
