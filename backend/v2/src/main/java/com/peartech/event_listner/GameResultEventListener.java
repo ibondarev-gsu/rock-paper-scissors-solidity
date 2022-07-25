@@ -2,7 +2,6 @@ package com.peartech.event_listner;
 
 import com.peartech.contracts.GameV2;
 import com.peartech.dao.Dao;
-import com.peartech.entity.Player;
 import com.peartech.entity.Room;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
