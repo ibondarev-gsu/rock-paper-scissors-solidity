@@ -14,3 +14,6 @@ npx hardhat console --network localhost
 const first = (await ethers.getSigners())[0];
 first.sendTransaction({value: ethers.utils.parseEther('10', 'ether'), to: '0x8a9c621B0d74Feeb3A09a9a5187D4d1Ef7bbc4E4'});
 first.sendTransaction({value: ethers.utils.parseEther('10', 'ether'), to: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'});
+
+const FlashLoanReceiver = await ethers.getContractFactory("FlashLoanReceiver");
+const contract = await FlashLoanReceiver.attach("0x16D1a953BB098CF3cDE43cF7a539574f390265fD");
