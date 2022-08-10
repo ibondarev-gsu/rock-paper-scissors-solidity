@@ -21,6 +21,10 @@ module.exports = {
     matic: {
       url: "https://polygon-mumbai.g.alchemy.com/v2/eIl0-vvoaFLKOseau8uapRBUla4_gAAg",
       accounts: ["422eb251cbd65f07c939bbccad8e162c620aed1e9fd6d0310963c1ff6775e466"]
+    },
+    rinkeby: {
+      url: "https://rinkeby.infura.io/v3/7a32f794eb6b4b41a0798aa672b3219f",
+      accounts: ["422eb251cbd65f07c939bbccad8e162c620aed1e9fd6d0310963c1ff6775e466"]
     }
   },
   solidity: "0.8.10",

@@ -28,12 +28,12 @@ async function main() {
 
   const users = await ethers.getSigners();
   const [owner, bot] = users;
-  const poolAddressesProvider = "0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6";//0xBA6378f1c1D046e9EB0F538560BA7558546edF3C
+  const poolAddressesProvider = "0xBA6378f1c1D046e9EB0F538560BA7558546edF3C";
   
   const flashLoanReceiverContract = await (await ethers.getContractFactory("FlashLoanReceiver", owner)).deploy(poolAddressesProvider);
   await flashLoanReceiverContract.deployed();
 
-  console.log("FlashLoanReceiverContract address = ", flashLoanReceiverContract.address); //0x16D1a953BB098CF3cDE43cF7a539574f390265fD
+  console.log("FlashLoanReceiverContract address = ", flashLoanReceiverContract.address); //0xbF6dA39Ca3935CE598ca3ce3F28B4AE772427FcF
 
 //   console.log("Owner address =", owner.address);
 //   console.log("Bot address =", bot.address);
